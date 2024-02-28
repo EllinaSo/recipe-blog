@@ -1,6 +1,4 @@
 import { useReducer } from 'react';
-import useAxios from 'axios-hooks';
-import { useForm } from 'react-hook-form';
 
 import Container from '@mui/material/Container';
 import Paper from '@mui/material/Paper';
@@ -8,62 +6,13 @@ import Typography from '@mui/material/Typography';
 import Divider from '@mui/material/Divider';
 import Stack from '@mui/material/Stack';
 import Box from '@mui/material/Box';
-import Grid from '@mui/material/Grid';
-import Button from '@mui/material/Button';
-import CircularProgress from '@mui/material/CircularProgress';
-import Link from '@mui/material/Link';
 
-import { useContextData } from '../../context';
-import { handleAxiosError } from '../../utils/error';
-import { setUserToStorage } from '../../utils/auth';
-import { TextInput, PasswordInput } from '../../components/FormFields';
-import { useNavigate } from 'react-router-dom';
+import Form from './components/Form';
 
 const Auth = () => {
-  const navigate = useNavigate();
-  const { updateContext } = useContextData();
   const [isSignUp, toggleIsSignUp] = useReducer((prev) => !prev, false);
 
-  const toggleFormType = () => {
-    toggleIsSignUp();
-    reset();
-  };
-
-  const [{ loading: signUpLoading }, signUp] = useAxios({ url: 'api/auth/signup', method: 'POST' });
-  const [{ loading: signInLoading }, signIn] = useAxios({ url: 'api/auth/signin', method: 'POST' });
-
-  const { control, handleSubmit, getValues, trigger, reset } = useForm({
-    defaultValues: {
-      password: '',
-      confirmPassword: '',
-      email: '',
-      username: '',
-    },
-    mode: 'onChange',
-  });
-
-  const handleOnSubmit = ({ password, username, email }) => {
-    if (isSignUp) {
-      signUp({ data: { password, username, email } })
-        .then(() => {
-          toggleFormType();
-        })
-        .catch(handleAxiosError);
-    } else {
-      signIn({ data: { password, email } })
-        .then(({ data }) => {
-          setUserToStorage(data);
-          updateContext({ profile: data });
-          navigate('/');
-        })
-        .catch(handleAxiosError);
-    }
-  };
-
-  const handlePasswordChange = async () => await trigger('confirmPassword');
-
   const formType = isSignUp ? 'sign up' : 'sign in';
-  const loading = signInLoading || signUpLoading;
 
   return (
     <Container maxWidth="md" disableGutters>
@@ -79,84 +28,8 @@ const Auth = () => {
 
           <Divider orientation="vertical" flexItem sx={{ display: { xs: 'none', md: 'block' } }} />
 
-          <Box width={{ xs: '100%', md: '50%' }} component="form" onSubmit={handleSubmit(handleOnSubmit)}>
-            <Grid container spacing={2}>
-              {isSignUp && (
-                <Grid item xs={12}>
-                  <TextInput
-                    autoFocus
-                    name="username"
-                    label="Username"
-                    placeholder="username"
-                    control={control}
-                    rules={{ required: true }}
-                  />
-                </Grid>
-              )}
-
-              <Grid item xs={12}>
-                <TextInput
-                  autoFocus
-                  type="email"
-                  name="email"
-                  label="Email"
-                  placeholder="email@example.com"
-                  control={control}
-                  rules={{
-                    required: 'Email is required',
-                    pattern: {
-                      value: /\S+@\S+\.\S+/,
-                      message: 'Email is invalid',
-                    },
-                  }}
-                />
-              </Grid>
-
-              <Grid item xs={12}>
-                <PasswordInput
-                  name="password"
-                  label="Password"
-                  placeholder="*********"
-                  control={control}
-                  rules={{ required: 'Password is required' }}
-                  onChange={handlePasswordChange}
-                />
-              </Grid>
-
-              {isSignUp && (
-                <Grid item xs={12}>
-                  <PasswordInput
-                    name="confirmPassword"
-                    label="Confirm password"
-                    placeholder="*********"
-                    control={control}
-                    rules={{
-                      required: 'Repeat password is required',
-                      validate: (value) => value === getValues('password') || 'Passwords do not match',
-                    }}
-                  />
-                </Grid>
-              )}
-            </Grid>
-
-            <Stack spacing={2} direction="row" sx={{ pt: 3 }}>
-              <Button
-                variant="contained"
-                fullWidth
-                type="submit"
-                disabled={loading}
-                endIcon={loading ? <CircularProgress color="inherit" size={14} /> : null}
-              >
-                {formType}
-              </Button>
-            </Stack>
-
-            <Typography mt={3}>
-              {isSignUp ? 'Already have an account?' : "Don't have an account?"}{' '}
-              <Link component="button" onClick={toggleFormType} type="button">
-                {`Sign ${isSignUp ? 'in' : 'up'}!`}
-              </Link>
-            </Typography>
+          <Box width={{ xs: '100%', md: '50%' }}>
+            <Form formType={formType} isSignUp={isSignUp} toggleIsSignUp={toggleIsSignUp} />
           </Box>
         </Stack>
       </Paper>

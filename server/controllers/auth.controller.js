@@ -37,12 +37,48 @@ export const signin = async (req, res, next) => {
       return next(errorHandler(404, signinError));
     }
 
-    const { password: hashedPassword, ...userData } = user._doc;
-    if (!(bcryptjs.compareSync(password, hashedPassword))) {
+    if (!(bcryptjs.compareSync(password, user.password))) {
       return next(errorHandler(404, signinError));
     }
 
-    const token = jwt.sign({ id: userData._id }, process.env.JWT_SECRET);
+    const token = jwt.sign({ id: user._id }, process.env.JWT_SECRET);
+
+    const { password: hashedPassword, ...userData } = user._doc;
+    res.status(200)
+      .cookie('access_token', token, { httpOnly: true })
+      .json(userData);
+  } catch (error) {
+    next(error);
+  }
+};
+
+export const singoogle = async (req, res, next) => {
+  const { name, googlePhotoUrl, email } = req.body;
+
+  try {
+    const user = await User.findOne({ email });
+
+    if (user) {
+      const token = jwt.sign({ id: user._id }, process.env.JWT_SECRET);
+      const { password, ...userData } = user._doc;
+      res.status(200)
+        .cookie('access_token', token, { httpOnly: true })
+        .json(userData);
+    }
+
+    const generatedPassword = Math.random().toString(36).slice(-8) + Math.random().toString(36).slice(-8);
+    const hashedPassword = bcryptjs.hashSync(generatedPassword, 10);
+
+    const newUser = new User({
+      username: name.toLowerCase().split(' ').join('') + Math.random().toString(9).slice(-4),
+      password: hashedPassword,
+      email,
+      profilePicture: googlePhotoUrl
+    });
+
+    await newUser.save();
+    const token = jwt.sign({ id: newUser._id }, process.env.JWT_SECRET);
+    const { password, ...userData } = newUser._doc;
     res.status(200)
       .cookie('access_token', token, { httpOnly: true })
       .json(userData);

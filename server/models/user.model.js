@@ -14,6 +14,10 @@ const userSchema = new mongoose.Schema({
   password: {
     type: String,
     require: true
+  },
+  profilePicture: {
+    type: String,
+    default: 'https://freeiconshop.com/wp-content/uploads/edd/chef-flat.png'
   }
 }, { timestamps: true });
 

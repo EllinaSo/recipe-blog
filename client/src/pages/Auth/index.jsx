@@ -1,7 +1,6 @@
 import { useReducer } from 'react';
 import useAxios from 'axios-hooks';
 import { useForm } from 'react-hook-form';
-import { toast } from 'react-toastify';
 
 import Container from '@mui/material/Container';
 import Paper from '@mui/material/Paper';
@@ -14,17 +13,26 @@ import Button from '@mui/material/Button';
 import CircularProgress from '@mui/material/CircularProgress';
 import Link from '@mui/material/Link';
 
+import { useContextData } from '../../context';
+import { handleAxiosError } from '../../utils/error';
+import { setUserToStorage } from '../../utils/auth';
 import { TextInput, PasswordInput } from '../../components/FormFields';
 import { useNavigate } from 'react-router-dom';
 
 const Auth = () => {
   const navigate = useNavigate();
-  const [isSignUp, toggleIsSignIn] = useReducer((prev) => !prev, false);
+  const { updateContext } = useContextData();
+  const [isSignUp, toggleIsSignUp] = useReducer((prev) => !prev, false);
+
+  const toggleFormType = () => {
+    toggleIsSignUp();
+    reset();
+  };
 
   const [{ loading: signUpLoading }, signUp] = useAxios({ url: 'api/auth/signup', method: 'POST' });
   const [{ loading: signInLoading }, signIn] = useAxios({ url: 'api/auth/signin', method: 'POST' });
 
-  const { control, handleSubmit, getValues, trigger } = useForm({
+  const { control, handleSubmit, getValues, trigger, reset } = useForm({
     defaultValues: {
       password: '',
       confirmPassword: '',
@@ -34,16 +42,22 @@ const Auth = () => {
     mode: 'onChange',
   });
 
-  const handleSign = (axiosPromise) =>
-    axiosPromise
-      .then(() => navigate('/'))
-      .catch((error) => toast.error(error.response?.data?.message || error.message));
-
   const handleOnSubmit = ({ password, username, email }) => {
     if (isSignUp) {
-      return handleSign(signUp({ data: { password, username, email } }));
+      signUp({ data: { password, username, email } })
+        .then(() => {
+          toggleFormType();
+        })
+        .catch(handleAxiosError);
+    } else {
+      signIn({ data: { password, email } })
+        .then(({ data }) => {
+          setUserToStorage(data);
+          updateContext({ profile: data });
+          navigate('/');
+        })
+        .catch(handleAxiosError);
     }
-    return handleSign(signIn({ data: { password, email } }));
   };
 
   const handlePasswordChange = async () => await trigger('confirmPassword');
@@ -60,7 +74,7 @@ const Auth = () => {
               Recipe Blog
             </Typography>
             <Typography variant="body1">This is a demo project.</Typography>
-            <Typography variant="body1">You can sign up with your Email and Password or with Google.</Typography>
+            <Typography variant="body1">You can {formType} with your Email and Password or with Google.</Typography>
           </Stack>
 
           <Divider orientation="vertical" flexItem sx={{ display: { xs: 'none', md: 'block' } }} />
@@ -139,7 +153,7 @@ const Auth = () => {
 
             <Typography mt={3}>
               {isSignUp ? 'Already have an account?' : "Don't have an account?"}{' '}
-              <Link component="button" onClick={() => toggleIsSignIn()} type="button">
+              <Link component="button" onClick={toggleFormType} type="button">
                 {`Sign ${isSignUp ? 'in' : 'up'}!`}
               </Link>
             </Typography>

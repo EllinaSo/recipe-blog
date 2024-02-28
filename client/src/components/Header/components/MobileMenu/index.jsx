@@ -10,9 +10,8 @@ import ListItemIcon from '@mui/material/ListItemIcon';
 import Box from '@mui/material/Box';
 import IconButton from '@mui/material/IconButton';
 import MenuIcon from '@mui/icons-material/Menu';
-import LoginIcon from '@mui/icons-material/Login';
 
-const MobileMenu = ({ links, logInPath }) => {
+const MobileMenu = ({ links, authButton }) => {
   const [isOpen, setIsOpen] = useState(false);
 
   const handleClose = () => setIsOpen(false);
@@ -49,11 +48,9 @@ const MobileMenu = ({ links, logInPath }) => {
           <Divider />
 
           <ListItem disablePadding>
-            <ListItemButton component={RouterLink} to={logInPath}>
-              <ListItemIcon>
-                <LoginIcon />
-              </ListItemIcon>
-              <ListItemText primary="Log in" />
+            <ListItemButton component={RouterLink} to={authButton.path} onClick={authButton.onClick}>
+              <ListItemIcon>{authButton.Icon}</ListItemIcon>
+              <ListItemText primary={authButton.text} />
             </ListItemButton>
           </ListItem>
         </Box>

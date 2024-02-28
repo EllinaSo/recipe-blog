@@ -1,4 +1,8 @@
-import { useReducer, useState } from 'react';
+import { useReducer } from 'react';
+import useAxios from 'axios-hooks';
+import { useForm } from 'react-hook-form';
+import { toast } from 'react-toastify';
+
 import Container from '@mui/material/Container';
 import Paper from '@mui/material/Paper';
 import Typography from '@mui/material/Typography';
@@ -6,34 +10,50 @@ import Divider from '@mui/material/Divider';
 import Stack from '@mui/material/Stack';
 import Box from '@mui/material/Box';
 import Grid from '@mui/material/Grid';
-import TextField from '@mui/material/TextField';
 import Button from '@mui/material/Button';
+import CircularProgress from '@mui/material/CircularProgress';
 import Link from '@mui/material/Link';
 
-import PasswordField from './components/PasswordField';
-
-const STATE = {
-  password: '',
-  repeatPassword: '',
-  email: '',
-  username: '',
-};
+import { TextInput, PasswordInput } from '../../components/FormFields';
+import { useNavigate } from 'react-router-dom';
 
 const Auth = () => {
+  const navigate = useNavigate();
   const [isSignUp, toggleIsSignIn] = useReducer((prev) => !prev, false);
 
-  const [userData, setUserData] = useState(STATE);
-  const { password, email, username, repeatPassword } = userData;
+  const [{ loading: signUpLoading }, signUp] = useAxios({ url: 'api/auth/signup', method: 'POST' });
+  const [{ loading: signInLoading }, signIn] = useAxios({ url: 'api/auth/signin', method: 'POST' });
 
-  const changeHandle = ({ target: { name, value } }) => {
-    setUserData((prev) => ({ ...prev, [name]: value }));
+  const { control, handleSubmit, getValues, trigger } = useForm({
+    defaultValues: {
+      password: '',
+      confirmPassword: '',
+      email: '',
+      username: '',
+    },
+    mode: 'onChange',
+  });
+
+  const handleSign = (axiosPromise) =>
+    axiosPromise
+      .then(() => navigate('/'))
+      .catch((error) => toast.error(error.response?.data?.message || error.message));
+
+  const handleOnSubmit = ({ password, username, email }) => {
+    if (isSignUp) {
+      return handleSign(signUp({ data: { password, username, email } }));
+    }
+    return handleSign(signIn({ data: { password, email } }));
   };
 
+  const handlePasswordChange = async () => await trigger('confirmPassword');
+
   const formType = isSignUp ? 'sign up' : 'sign in';
+  const loading = signInLoading || signUpLoading;
 
   return (
-    <Container maxWidth="md">
-      <Paper sx={{ p: 6 }}>
+    <Container maxWidth="md" disableGutters>
+      <Paper sx={{ p: { xs: 4, sm: 6 } }}>
         <Stack gap={4} direction="row" sx={{ flexDirection: { xs: 'column', md: 'row' } }}>
           <Stack width={{ xs: '100%', md: '50%' }} justifyContent="center" gap={{ xs: 0, md: 1 }}>
             <Typography sx={{ fontWeight: 'medium', typography: { xs: 'h6', md: 'h4' } }} mb={2}>
@@ -45,65 +65,81 @@ const Auth = () => {
 
           <Divider orientation="vertical" flexItem sx={{ display: { xs: 'none', md: 'block' } }} />
 
-          <Box width={{ xs: '100%', md: '50%' }} component="form">
+          <Box width={{ xs: '100%', md: '50%' }} component="form" onSubmit={handleSubmit(handleOnSubmit)}>
             <Grid container spacing={2}>
               {isSignUp && (
                 <Grid item xs={12}>
-                  <TextField
+                  <TextInput
                     autoFocus
                     name="username"
                     label="Username"
-                    value={username}
-                    onChange={changeHandle}
                     placeholder="username"
+                    control={control}
+                    rules={{ required: true }}
                   />
                 </Grid>
               )}
 
               <Grid item xs={12}>
-                <TextField
+                <TextInput
                   autoFocus
                   type="email"
                   name="email"
                   label="Email"
-                  value={email}
-                  onChange={changeHandle}
                   placeholder="email@example.com"
+                  control={control}
+                  rules={{
+                    required: 'Email is required',
+                    pattern: {
+                      value: /\S+@\S+\.\S+/,
+                      message: 'Email is invalid',
+                    },
+                  }}
                 />
               </Grid>
 
               <Grid item xs={12}>
-                <PasswordField
+                <PasswordInput
                   name="password"
                   label="Password"
-                  value={password}
-                  onChange={changeHandle}
                   placeholder="*********"
+                  control={control}
+                  rules={{ required: 'Password is required' }}
+                  onChange={handlePasswordChange}
                 />
               </Grid>
 
               {isSignUp && (
                 <Grid item xs={12}>
-                  <PasswordField
-                    name="repeatPassword"
-                    label="Repeat password"
-                    value={repeatPassword}
-                    onChange={changeHandle}
+                  <PasswordInput
+                    name="confirmPassword"
+                    label="Confirm password"
                     placeholder="*********"
+                    control={control}
+                    rules={{
+                      required: 'Repeat password is required',
+                      validate: (value) => value === getValues('password') || 'Passwords do not match',
+                    }}
                   />
                 </Grid>
               )}
             </Grid>
 
             <Stack spacing={2} direction="row" sx={{ pt: 3 }}>
-              <Button variant="contained" fullWidth type="submit">
+              <Button
+                variant="contained"
+                fullWidth
+                type="submit"
+                disabled={loading}
+                endIcon={loading ? <CircularProgress color="inherit" size={14} /> : null}
+              >
                 {formType}
               </Button>
             </Stack>
 
             <Typography mt={3}>
               {isSignUp ? 'Already have an account?' : "Don't have an account?"}{' '}
-              <Link component="button" onClick={toggleIsSignIn} type="button">
+              <Link component="button" onClick={() => toggleIsSignIn()} type="button">
                 {`Sign ${isSignUp ? 'in' : 'up'}!`}
               </Link>
             </Typography>

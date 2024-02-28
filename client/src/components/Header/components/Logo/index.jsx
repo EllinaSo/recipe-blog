@@ -17,7 +17,7 @@ const Logo = () => (
       variant="h6"
       color="text.secondary"
     >
-      Receipt Blog
+      Recipe Blog
     </Typography>
   </Stack>
 );

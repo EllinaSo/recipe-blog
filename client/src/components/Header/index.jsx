@@ -23,77 +23,44 @@ const LINKS = [
 
 const LOG_IN_PATH = '/auth';
 
-const Header = () => {
-  return (
-    <AppBar elevation={0}>
-      <Container maxWidth="xl">
-        <Toolbar disableGutters sx={{ gap: 4 }}>
-          <Logo />
-          <SearchField />
+const Header = () => (
+  <AppBar elevation={0} position="sticky">
+    <Container maxWidth="xl">
+      <Toolbar disableGutters sx={{ gap: 4 }}>
+        <Logo />
+        <SearchField />
 
-          <Box
-            display={{ xs: 'none', md: 'flex' }}
-            sx={{ flexGrow: 1 }}
-            alignItems="center"
-            justifyContent="flex-end"
-            gap={2}
-          >
-            {LINKS.map(({ title, path }) => (
-              <Button key={title} component={RouterLink} to={path} variant="text" color="secondary">
-                {title}
-              </Button>
-            ))}
-          </Box>
-
-          <Box sx={{ ml: 'auto', display: { xs: 'block', md: 'none' } }}>
-            <MobileMenu links={LINKS} logInPath={LOG_IN_PATH} />
-          </Box>
-
-          <Button
-            variant="contained"
-            color="secondary"
-            startIcon={<LoginIcon />}
-            sx={{ display: { xs: 'none', md: 'inline-flex' } }}
-            component={RouterLink}
-            to={LOG_IN_PATH}
-          >
-            Log in
-          </Button>
-        </Toolbar>
-      </Container>
-      {/* 
-      <AppBar.Collapse>
-        {LINKS.map(({ path, title }) => (
-          <AppBar.Link key={path} as={'div'}>
-            <Link
-              to={path}
-              className={({ isActive }) =>
-                ` px-3 py-2 text-md font-medium rounded-md duration-200 ${
-                  isActive
-                    ? 'text-amber-700 bg-white text-amber-700'
-                    : 'text-white hover:bg-white/70 hover:text-amber-700 focus:bg-white/70 focus:text-amber-700'
-                }  `
-              }
-            >
+        <Box
+          display={{ xs: 'none', md: 'flex' }}
+          sx={{ flexGrow: 1 }}
+          alignItems="center"
+          justifyContent="flex-end"
+          gap={2}
+        >
+          {LINKS.map(({ title, path }) => (
+            <Button key={title} component={RouterLink} to={path} variant="text" color="secondary">
               {title}
-            </Link>
-          </AppBar.Link>
-        ))}
-      </AppBar.Collapse>
+            </Button>
+          ))}
+        </Box>
 
-      <form>
-        <label htmlFor="search" className="invisible absolute">
-          Search
-        </label>
-        <input
-          id="search"
-          name="search"
-          className="bg-white h-[40px] rounded-md px-2"
-          placeholder="Search"
-        />
-      </form> */}
-    </AppBar>
-  );
-};
+        <Box sx={{ ml: 'auto', display: { xs: 'block', md: 'none' } }}>
+          <MobileMenu links={LINKS} logInPath={LOG_IN_PATH} />
+        </Box>
+
+        <Button
+          variant="contained"
+          color="secondary"
+          startIcon={<LoginIcon />}
+          sx={{ display: { xs: 'none', md: 'inline-flex' } }}
+          component={RouterLink}
+          to={LOG_IN_PATH}
+        >
+          Log in
+        </Button>
+      </Toolbar>
+    </Container>
+  </AppBar>
+);
 
 export default Header;

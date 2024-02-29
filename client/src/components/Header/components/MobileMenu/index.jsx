@@ -10,8 +10,13 @@ import ListItemIcon from '@mui/material/ListItemIcon';
 import Box from '@mui/material/Box';
 import IconButton from '@mui/material/IconButton';
 import MenuIcon from '@mui/icons-material/Menu';
+import LoginIcon from '@mui/icons-material/Login';
 
-const MobileMenu = ({ links, authButton }) => {
+import SignOutControl from '../SignOutControl';
+import UserListItem from '../UserListItem';
+import { SIGN_IN } from '../../constants';
+
+const MobileMenu = ({ links, user, userLinks }) => {
   const [isOpen, setIsOpen] = useState(false);
 
   const handleClose = () => setIsOpen(false);
@@ -45,14 +50,33 @@ const MobileMenu = ({ links, authButton }) => {
               </ListItem>
             ))}
           </List>
+
           <Divider />
 
-          <ListItem disablePadding>
-            <ListItemButton component={RouterLink} to={authButton.path} onClick={authButton.onClick}>
-              <ListItemIcon>{authButton.Icon}</ListItemIcon>
-              <ListItemText primary={authButton.text} />
-            </ListItemButton>
-          </ListItem>
+          {user ? (
+            <List>
+              <UserListItem {...user} />
+
+              {userLinks.map(({ title, path }) => (
+                <ListItem key={title} disablePadding>
+                  <ListItemButton component={RouterLink} to={path}>
+                    <ListItemText primary={title} />
+                  </ListItemButton>
+                </ListItem>
+              ))}
+
+              <SignOutControl />
+            </List>
+          ) : (
+            <ListItem>
+              <ListItemButton component={RouterLink} to={SIGN_IN.path}>
+                <ListItemIcon>
+                  <LoginIcon fontSize="small" />
+                </ListItemIcon>
+                <ListItemText primary={SIGN_IN.text} />
+              </ListItemButton>
+            </ListItem>
+          )}
         </Box>
       </Drawer>
     </>

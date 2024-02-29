@@ -5,54 +5,17 @@ import Toolbar from '@mui/material/Toolbar';
 import Box from '@mui/material/Box';
 import Button from '@mui/material/Button';
 import LoginIcon from '@mui/icons-material/Login';
-import LogoutIcon from '@mui/icons-material/Logout';
 
 import { useContextData } from '../../context';
-import { removeUserFromStorage } from '../../utils/auth';
+
 import Logo from './components/Logo';
 import MobileMenu from './components/MobileMenu';
 import SearchField from './components/SearchField';
-
-const LINKS = [
-  {
-    path: '/',
-    title: 'Home',
-  },
-  {
-    path: '/recipes',
-    title: 'Recipes',
-  },
-];
-
-const AUTH_PATH = '/auth';
+import UserMenu from './components/UserMenu';
+import { SIGN_IN, LINKS, USER_LINKS } from './constants';
 
 const Header = () => {
-  const { profile, updateContext } = useContextData();
-
-  const handleSignOut = () => {
-    if (profile) {
-      removeUserFromStorage();
-      updateContext({ profile: null });
-    }
-  };
-
-  const authButton = profile
-    ? {
-        Icon: <LogoutIcon />,
-        text: 'Sign out',
-        path: '/',
-        onClick: () => {
-          if (profile) {
-            removeUserFromStorage();
-            updateContext({ profile: null });
-          }
-        },
-      }
-    : {
-        Icon: <LoginIcon />,
-        text: 'Sign in',
-        path: '/auth',
-      };
+  const { profile } = useContextData();
 
   return (
     <AppBar elevation={0} position="sticky">
@@ -60,7 +23,6 @@ const Header = () => {
         <Toolbar disableGutters sx={{ gap: 4 }}>
           <Logo />
           <SearchField />
-
           <Box
             display={{ xs: 'none', md: 'flex' }}
             sx={{ flexGrow: 1 }}
@@ -76,20 +38,37 @@ const Header = () => {
           </Box>
 
           <Box sx={{ ml: 'auto', display: { xs: 'block', md: 'none' } }}>
-            <MobileMenu links={LINKS} authButton={authButton} />
+            <MobileMenu
+              links={LINKS}
+              userLinks={USER_LINKS}
+              user={
+                profile
+                  ? { email: profile.email, username: profile.username, profilePicture: profile.profilePicture }
+                  : null
+              }
+            />
           </Box>
 
-          <Button
-            variant="contained"
-            color="secondary"
-            startIcon={authButton.Icon}
-            sx={{ display: { xs: 'none', md: 'inline-flex' } }}
-            component={RouterLink}
-            to={authButton.path}
-            onClick={authButton.onClick}
-          >
-            {authButton.text}
-          </Button>
+          <Box display={{ xs: 'none', md: 'block' }}>
+            {profile ? (
+              <UserMenu
+                profilePicture={profile.profilePicture}
+                username={profile.username}
+                email={profile.email}
+                links={USER_LINKS}
+              />
+            ) : (
+              <Button
+                variant="contained"
+                color="secondary"
+                startIcon={<LoginIcon />}
+                component={RouterLink}
+                to={SIGN_IN.path}
+              >
+                {SIGN_IN.text}
+              </Button>
+            )}
+          </Box>
         </Toolbar>
       </Container>
     </AppBar>

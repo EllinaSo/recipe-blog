@@ -15,7 +15,7 @@ const Auth = () => {
   const formType = isSignUp ? 'sign up' : 'sign in';
 
   return (
-    <Container maxWidth="md" disableGutters>
+    <Container maxWidth="md" sx={{ py: { xs: 4, md: 6 } }}>
       <Paper sx={{ p: { xs: 4, sm: 6 } }}>
         <Stack gap={4} direction="row" sx={{ flexDirection: { xs: 'column', md: 'row' } }}>
           <Stack width={{ xs: '100%', md: '50%' }} justifyContent="center" gap={{ xs: 0, md: 1 }}>

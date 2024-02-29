@@ -7,12 +7,14 @@ import Button from '@mui/material/Button';
 import LoginIcon from '@mui/icons-material/Login';
 
 import { useContextData } from '../../context';
+import { SIGN_IN, LINKS, DASHBOARD_LINKS } from '../../constants';
 
 import Logo from './components/Logo';
 import MobileMenu from './components/MobileMenu';
 import SearchField from './components/SearchField';
 import UserMenu from './components/UserMenu';
-import { SIGN_IN, LINKS, USER_LINKS } from './constants';
+
+const USER_LINKS = DASHBOARD_LINKS.slice(0, 2);
 
 const Header = () => {
   const { profile } = useContextData();
@@ -40,7 +42,7 @@ const Header = () => {
           <Box sx={{ ml: 'auto', display: { xs: 'block', md: 'none' } }}>
             <MobileMenu
               links={LINKS}
-              userLinks={USER_LINKS}
+              userLinks={DASHBOARD_LINKS}
               user={
                 profile
                   ? { email: profile.email, username: profile.username, profilePicture: profile.profilePicture }

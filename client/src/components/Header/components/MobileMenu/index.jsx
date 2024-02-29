@@ -12,9 +12,10 @@ import IconButton from '@mui/material/IconButton';
 import MenuIcon from '@mui/icons-material/Menu';
 import LoginIcon from '@mui/icons-material/Login';
 
+import { SIGN_IN } from '../../../../constants';
+
 import SignOutControl from '../SignOutControl';
 import UserListItem from '../UserListItem';
-import { SIGN_IN } from '../../constants';
 
 const MobileMenu = ({ links, user, userLinks }) => {
   const [isOpen, setIsOpen] = useState(false);

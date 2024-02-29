@@ -4,10 +4,12 @@ import { ToastContainer } from 'react-toastify';
 import router from './router';
 import theme from './theme';
 import { DataProvider } from './context';
+import CssBaseline from '@mui/material/CssBaseline';
 import 'react-toastify/dist/ReactToastify.css';
 
 const App = () => (
   <ThemeProvider theme={theme}>
+    <CssBaseline />
     <DataProvider>
       <RouterProvider router={router} />
     </DataProvider>

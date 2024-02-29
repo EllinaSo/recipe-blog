@@ -1,13 +1,13 @@
-import Container from '@mui/material/Container';
+import Box from '@mui/material/Box';
 import { Outlet } from 'react-router-dom';
 import Header from '../Header';
 
 const Layout = () => (
   <>
     <Header />
-    <Container maxWidth="lg" sx={{ py: { xs: 4, md: 6 } }}>
+    <Box py={{ xs: 2, md: 4 }}>
       <Outlet />
-    </Container>
+    </Box>
   </>
 );
 

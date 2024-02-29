@@ -1,7 +1,10 @@
-import { createBrowserRouter } from 'react-router-dom';
+import { createBrowserRouter, redirect } from 'react-router-dom';
 import Home from '../pages/Home';
 import Auth from '../pages/Auth';
+import Dashboard from '../pages/Dashboard';
+import DashboardLayout from '../components/DashboardLayout';
 import Layout from '../components/Layout';
+import { getUserFromStorage } from '../utils/auth';
 
 export default createBrowserRouter([
   {
@@ -15,6 +18,18 @@ export default createBrowserRouter([
       {
         path: 'auth',
         Component: Auth,
+        loader: () => (getUserFromStorage() ? redirect('/') : null),
+      },
+      {
+        path: 'dashboard',
+        Component: DashboardLayout,
+        loader: () => (getUserFromStorage() ? null : redirect('/auth')),
+        children: [
+          {
+            index: true,
+            Component: Dashboard,
+          },
+        ],
       },
     ],
   },

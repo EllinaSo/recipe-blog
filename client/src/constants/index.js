@@ -9,7 +9,11 @@ export const LINKS = [
   },
 ];
 
-export const USER_LINKS = [
+export const DASHBOARD_LINKS = [
+  {
+    path: '/dashboard',
+    title: 'Dashboard',
+  },
   {
     path: '/dashboard',
     title: 'Profile',

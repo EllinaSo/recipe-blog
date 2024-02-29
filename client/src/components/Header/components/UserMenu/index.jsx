@@ -40,7 +40,7 @@ const UserMenu = ({ username, profilePicture, email, links }) => {
         <Divider />
 
         {links.map(({ path, title }) => (
-          <MenuItem key={path} component={RouterLink} to={path}>
+          <MenuItem key={path} component={RouterLink} to={path} onClick={handleCloseUserMenu}>
             <ListItemText primary={title} />
           </MenuItem>
         ))}

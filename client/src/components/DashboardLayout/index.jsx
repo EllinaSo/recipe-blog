@@ -1,4 +1,4 @@
-import { Outlet } from 'react-router-dom';
+import { Outlet, Link as RouterLink } from 'react-router-dom';
 import Box from '@mui/material/Box';
 import Drawer from '@mui/material/Drawer';
 import Container from '@mui/material/Container';
@@ -45,7 +45,7 @@ const DashboardLayout = () => (
         <List>
           {DASHBOARD_LINKS.map(({ title, path }) => (
             <ListItem key={path} disablePadding>
-              <ListItemButton>
+              <ListItemButton component={RouterLink} to={path}>
                 <ListItemIcon>{ICONS[title]}</ListItemIcon>
                 <ListItemText primary={title} />
               </ListItemButton>

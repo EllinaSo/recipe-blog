@@ -1,5 +1,3 @@
-import { useReducer } from 'react';
-
 import Container from '@mui/material/Container';
 import Paper from '@mui/material/Paper';
 import Typography from '@mui/material/Typography';
@@ -9,27 +7,25 @@ import Box from '@mui/material/Box';
 
 import Form from './components/Form';
 
-const Auth = () => {
-  const [isSignUp, toggleIsSignUp] = useReducer((prev) => !prev, false);
-
-  const formType = isSignUp ? 'sign up' : 'sign in';
-
+const Profile = () => {
   return (
     <Container maxWidth="md" sx={{ py: { xs: 4, md: 6 } }}>
       <Paper sx={{ p: { xs: 4, sm: 6 } }}>
         <Stack gap={4} direction="row" sx={{ flexDirection: { xs: 'column', md: 'row' } }}>
           <Stack width={{ xs: '100%', md: '50%' }} justifyContent="center" gap={{ xs: 0, md: 1 }}>
             <Typography fontWeight="medium" sx={{ typography: { xs: 'h6', md: 'h4' } }} mb={2}>
-              Recipe Blog
+              Profile
             </Typography>
             <Typography variant="body1">This is a demo project.</Typography>
-            <Typography variant="body1">You can {formType} with your Email and Password or with Google.</Typography>
+            <Typography variant="body1">
+              You can change your avatar, username, email and password, no confirmation needed.
+            </Typography>
           </Stack>
 
           <Divider orientation="vertical" flexItem sx={{ display: { xs: 'none', md: 'block' } }} />
 
           <Box width={{ xs: '100%', md: '50%' }}>
-            <Form formType={formType} isSignUp={isSignUp} toggleIsSignUp={toggleIsSignUp} />
+            <Form />
           </Box>
         </Stack>
       </Paper>
@@ -37,4 +33,4 @@ const Auth = () => {
   );
 };
 
-export default Auth;
+export default Profile;

@@ -22,7 +22,7 @@ const UserMenu = ({ username, profilePicture, email, links }) => {
     <>
       <Tooltip title="Open settings">
         <IconButton onClick={handleOpenUserMenu}>
-          <Avatar src={profilePicture} />
+          <Avatar src={profilePicture} alt={username} />
         </IconButton>
       </Tooltip>
 

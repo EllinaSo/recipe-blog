@@ -13,7 +13,7 @@ const Logo = () => (
     <Typography
       as="div"
       sx={{ typography: { xs: 'body2', sm: 'h6', md: 'h5' } }}
-      style={{ fontWeight: 500 }}
+      fontWeight="medium"
       variant="h6"
       color="text.secondary"
     >

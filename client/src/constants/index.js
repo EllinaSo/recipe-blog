@@ -15,7 +15,7 @@ export const DASHBOARD_LINKS = [
     title: 'Dashboard',
   },
   {
-    path: '/dashboard',
+    path: '/dashboard/profile',
     title: 'Profile',
   },
 ];

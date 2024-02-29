@@ -8,7 +8,7 @@ const UserListItem = ({ username, profilePicture, email }) => (
   <ListItem>
     {profilePicture && (
       <ListItemIcon>
-        <Avatar src={profilePicture} />
+        <Avatar src={profilePicture} alt={username} />
       </ListItemIcon>
     )}
     <ListItemText

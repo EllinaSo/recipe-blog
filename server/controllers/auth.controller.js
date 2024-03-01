@@ -2,12 +2,27 @@ import bcryptjs from 'bcryptjs';
 import jwt from 'jsonwebtoken';
 import User from '../models/user.model.js';
 import { errorHandler } from '../utils/error.js';
+import { validatePasswordLength, validateUsernameLength, validateUsernameSpace, validateUsernameCase, validateUsernameSymbols } from '../utils/user.js';
 
-export const signup = async (req, res, next) => {
+export const signUp = async (req, res, next) => {
   const { username, password, email } = req.body;
 
   if (!(username && email && password)) {
     return next(errorHandler(400, 'All fields are required'));
+  }
+
+  const passwordError = validatePasswordLength(password);
+  if (passwordError) {
+    return next(errorHandler(400, passwordError));
+  }
+
+  const usernameError =
+    validateUsernameLength(username) ||
+    validateUsernameSpace(username) ||
+    validateUsernameCase(username) ||
+    validateUsernameSymbols(username);
+  if (usernameError) {
+    return next(errorHandler(400, usernameError));
   }
 
   const hashedPassword = bcryptjs.hashSync(password, 10);
@@ -22,8 +37,8 @@ export const signup = async (req, res, next) => {
   }
 };
 
-const signinError = 'Incorrect username or password';
-export const signin = async (req, res, next) => {
+const signInError = 'Incorrect username or password';
+export const signIn = async (req, res, next) => {
   const { password, email } = req.body;
 
   if (!(email && password)) {
@@ -34,11 +49,11 @@ export const signin = async (req, res, next) => {
     const user = await User.findOne({ email });
 
     if (!(user)) {
-      return next(errorHandler(404, signinError));
+      return next(errorHandler(404, signInError));
     }
 
     if (!(bcryptjs.compareSync(password, user.password))) {
-      return next(errorHandler(404, signinError));
+      return next(errorHandler(404, signInError));
     }
 
     const token = jwt.sign({ id: user._id }, process.env.JWT_SECRET);
@@ -52,7 +67,7 @@ export const signin = async (req, res, next) => {
   }
 };
 
-export const singoogle = async (req, res, next) => {
+export const signWithGoogle = async (req, res, next) => {
   const { name, googlePhotoUrl, email } = req.body;
 
   try {
@@ -69,10 +84,14 @@ export const singoogle = async (req, res, next) => {
     const generatedPassword = Math.random().toString(36).slice(-8) + Math.random().toString(36).slice(-8);
     const hashedPassword = bcryptjs.hashSync(generatedPassword, 10);
 
+    let username = name.toLowerCase().split(' ').join('') + Math.random().toString(9).slice(-4);
+    username = username.length < 8 ? username.padEnd(8, '0') : username;
+    username = username.length > 20 ? username.substring(0, 20) : username;
+
     const newUser = new User({
-      username: name.toLowerCase().split(' ').join('') + Math.random().toString(9).slice(-4),
-      password: hashedPassword,
+      username,
       email,
+      password: hashedPassword,
       profilePicture: googlePhotoUrl
     });
 

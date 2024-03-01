@@ -12,6 +12,13 @@ import Link from '@mui/material/Link';
 import { useContextData } from '../../../../context';
 import { handleAxiosError } from '../../../../utils/error';
 import { setUserToStorage } from '../../../../utils/auth';
+import {
+  emailValidation,
+  usernameMinLength,
+  usernameMaxLength,
+  usernameValidation,
+  passwordLength,
+} from '../../../../utils/userValidation';
 import { TextInput, PasswordInput } from '../../../../components/FormFields';
 
 import GoogleButton from '../GoogleButton';
@@ -71,7 +78,7 @@ const Form = ({ formType, isSignUp, toggleIsSignUp }) => {
               label="Username"
               placeholder="username"
               control={control}
-              rules={{ required: true }}
+              rules={{ required: true, ...usernameMinLength, ...usernameMaxLength, validate: usernameValidation }}
             />
           </Grid>
         )}
@@ -86,10 +93,7 @@ const Form = ({ formType, isSignUp, toggleIsSignUp }) => {
             control={control}
             rules={{
               required: 'Email is required',
-              pattern: {
-                value: /\S+@\S+\.\S+/,
-                message: 'Email is invalid',
-              },
+              validate: emailValidation,
             }}
           />
         </Grid>
@@ -100,7 +104,7 @@ const Form = ({ formType, isSignUp, toggleIsSignUp }) => {
             label="Password"
             placeholder="*********"
             control={control}
-            rules={{ required: 'Password is required' }}
+            rules={{ required: 'Password is required', ...passwordLength }}
             onChange={handlePasswordChange}
           />
         </Grid>

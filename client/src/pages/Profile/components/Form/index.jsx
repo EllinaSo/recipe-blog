@@ -5,6 +5,13 @@ import Button from '@mui/material/Button';
 import Box from '@mui/material/Box';
 
 import { useContextData } from '../../../../context';
+import {
+  emailValidation,
+  usernameMinLength,
+  usernameMaxLength,
+  usernameValidation,
+  passwordLength,
+} from '../../../../utils/userValidation';
 import { TextInput, PasswordInput, ImageInput } from '../../../../components/FormFields';
 
 import DeleteAccountControl from '../DeleteAccountControl';
@@ -37,7 +44,7 @@ const Form = () => {
             label="Username"
             placeholder="username"
             control={control}
-            rules={{ required: true }}
+            rules={{ required: true, ...usernameMinLength, ...usernameMaxLength, validate: usernameValidation }}
           />
         </Grid>
         <Grid item xs={12}>
@@ -50,10 +57,7 @@ const Form = () => {
             control={control}
             rules={{
               required: 'Email is required',
-              pattern: {
-                value: /\S+@\S+\.\S+/,
-                message: 'Email is invalid',
-              },
+              validate: emailValidation,
             }}
           />
         </Grid>
@@ -63,7 +67,7 @@ const Form = () => {
             label="Password"
             placeholder="*********"
             control={control}
-            rules={{ required: 'Password is required' }}
+            rules={{ required: 'Password is required', ...passwordLength }}
           />
         </Grid>
         <Grid item xs={12}>

@@ -15,7 +15,10 @@ const GoogleButton = () => {
   const navigate = useNavigate();
   const { updateContext } = useContextData();
 
-  const [{ loading }, saveUserData] = useAxios({ url: 'api/auth/google', method: 'POST', withCredentials: true });
+  const [{ loading }, saveUserData] = useAxios({
+    url: 'api/auth/google',
+    method: 'POST',
+  });
 
   const handleGoogleLogin = async () => {
     const provider = new GoogleAuthProvider();

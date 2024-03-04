@@ -35,12 +35,10 @@ const Form = ({ formType, isSignUp, toggleIsSignUp }) => {
   const [{ loading: signUpLoading }, signUp] = useAxios({
     url: 'api/auth/signup',
     method: 'POST',
-    withCredentials: true,
   });
   const [{ loading: signInLoading }, signIn] = useAxios({
     url: 'api/auth/signin',
     method: 'POST',
-    withCredentials: true,
   });
 
   const { control, handleSubmit, getValues, trigger, reset } = useForm({

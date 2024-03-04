@@ -17,6 +17,7 @@ import {
 import { TextInput, PasswordInput, ImageInput } from '../../../../components/FormFields';
 import { setUserToStorage } from '../../../../utils/auth';
 import { handleAxiosError } from '../../../../utils/error';
+import { handleSuccess } from '../../../../utils/success';
 
 import DeleteAccountControl from '../DeleteAccountControl';
 
@@ -29,7 +30,6 @@ const Form = () => {
   const [{ loading }, updateUserData] = useAxios({
     url: `api/user/update/${id}`,
     method: 'PUT',
-    withCredentials: true,
   });
 
   const { control, handleSubmit } = useForm({
@@ -46,6 +46,7 @@ const Form = () => {
       .then(({ data }) => {
         setUserToStorage(data);
         updateContext({ profile: data });
+        handleSuccess('User has been updated');
       })
       .catch(handleAxiosError);
 

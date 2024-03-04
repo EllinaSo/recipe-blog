@@ -3,6 +3,7 @@ import { configure } from 'axios-hooks';
 
 export default function bootstrap() {
   const axios = Axios.create({
+    withCredentials: true,
     baseURL: process.env.NODE_ENV === 'production' ? 'http://localhost:5000' : 'http://localhost:5000',
   });
 

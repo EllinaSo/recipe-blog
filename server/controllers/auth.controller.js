@@ -92,7 +92,8 @@ export const signWithGoogle = async (req, res, next) => {
       username,
       email,
       password: hashedPassword,
-      profilePicture: googlePhotoUrl
+      profilePicture: googlePhotoUrl,
+      isGoogleUser: true
     });
 
     await newUser.save();

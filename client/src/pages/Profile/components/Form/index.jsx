@@ -1,8 +1,10 @@
+import useAxios from 'axios-hooks';
 import { useForm } from 'react-hook-form';
 import Stack from '@mui/material/Stack';
 import Grid from '@mui/material/Grid';
 import Button from '@mui/material/Button';
 import Box from '@mui/material/Box';
+import CircularProgress from '@mui/material/CircularProgress';
 
 import { useContextData } from '../../../../context';
 import {
@@ -13,13 +15,21 @@ import {
   passwordLength,
 } from '../../../../utils/userValidation';
 import { TextInput, PasswordInput, ImageInput } from '../../../../components/FormFields';
+import { setUserToStorage } from '../../../../utils/auth';
 
 import DeleteAccountControl from '../DeleteAccountControl';
 
 const Form = () => {
   const {
-    profile: { email, username, profilePicture },
+    updateContext,
+    profile: { email, username, profilePicture, _id: id, isGoogleUser },
   } = useContextData();
+
+  const [{ loading }, updateUserData] = useAxios({
+    url: `api/user/update/${id}`,
+    method: 'PUT',
+    withCredentials: true,
+  });
 
   const { control, handleSubmit } = useForm({
     defaultValues: {
@@ -30,9 +40,11 @@ const Form = () => {
     mode: 'onChange',
   });
 
-  const handleOnSubmit = (data) => {
-    console.log(data);
-  };
+  const handleOnSubmit = (userData) =>
+    updateUserData({ data: userData }).then(({ data }) => {
+      setUserToStorage(data);
+      updateContext({ profile: data });
+    });
 
   return (
     <form onSubmit={handleSubmit(handleOnSubmit)}>
@@ -47,36 +59,46 @@ const Form = () => {
             rules={{ required: true, ...usernameMinLength, ...usernameMaxLength, validate: usernameValidation }}
           />
         </Grid>
-        <Grid item xs={12}>
-          <TextInput
-            autoFocus
-            type="email"
-            name="email"
-            label="Email"
-            placeholder="email@example.com"
-            control={control}
-            rules={{
-              required: 'Email is required',
-              validate: emailValidation,
-            }}
-          />
-        </Grid>
-        <Grid item xs={12}>
-          <PasswordInput
-            name="password"
-            label="Password"
-            placeholder="*********"
-            control={control}
-            rules={{ required: 'Password is required', ...passwordLength }}
-          />
-        </Grid>
+        {!isGoogleUser && (
+          <Grid item xs={12}>
+            <TextInput
+              autoFocus
+              type="email"
+              name="email"
+              label="Email"
+              placeholder="email@example.com"
+              control={control}
+              rules={{
+                required: 'Email is required',
+                validate: emailValidation,
+              }}
+            />
+          </Grid>
+        )}
+        {!isGoogleUser && (
+          <Grid item xs={12}>
+            <PasswordInput
+              name="password"
+              label="New password"
+              placeholder="********"
+              control={control}
+              rules={passwordLength}
+            />
+          </Grid>
+        )}
         <Grid item xs={12}>
           <ImageInput label="Upload avatar" control={control} name="profilePicture" />
         </Grid>
       </Grid>
 
       <Stack spacing={2} direction="column" sx={{ pt: 3 }}>
-        <Button variant="contained" fullWidth type="submit">
+        <Button
+          variant="contained"
+          fullWidth
+          type="submit"
+          disabled={loading}
+          endIcon={loading ? <CircularProgress color="inherit" size={14} /> : null}
+        >
           Update
         </Button>
       </Stack>

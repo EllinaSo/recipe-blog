@@ -18,7 +18,10 @@ const Profile = () => {
             </Typography>
             <Typography variant="body1">This is a demo project.</Typography>
             <Typography variant="body1">
-              You can change your avatar, username, email and password, no confirmation needed.
+              You're welcome to update your avatar, username, password and email without confirmation.
+            </Typography>
+            <Typography variant="body1">
+              Note that if you registered with Google, you can't change your email or password.
             </Typography>
           </Stack>
 

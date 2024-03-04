@@ -32,8 +32,16 @@ const Form = ({ formType, isSignUp, toggleIsSignUp }) => {
     reset();
   };
 
-  const [{ loading: signUpLoading }, signUp] = useAxios({ url: 'api/auth/signup', method: 'POST' });
-  const [{ loading: signInLoading }, signIn] = useAxios({ url: 'api/auth/signin', method: 'POST' });
+  const [{ loading: signUpLoading }, signUp] = useAxios({
+    url: 'api/auth/signup',
+    method: 'POST',
+    withCredentials: true,
+  });
+  const [{ loading: signInLoading }, signIn] = useAxios({
+    url: 'api/auth/signin',
+    method: 'POST',
+    withCredentials: true,
+  });
 
   const { control, handleSubmit, getValues, trigger, reset } = useForm({
     defaultValues: {
@@ -102,9 +110,9 @@ const Form = ({ formType, isSignUp, toggleIsSignUp }) => {
           <PasswordInput
             name="password"
             label="Password"
-            placeholder="*********"
+            placeholder="********"
             control={control}
-            rules={{ required: 'Password is required', ...passwordLength }}
+            rules={{ required: 'Password is required', ...(isSignUp ? passwordLength : {}) }}
             onChange={handlePasswordChange}
           />
         </Grid>
@@ -114,7 +122,7 @@ const Form = ({ formType, isSignUp, toggleIsSignUp }) => {
             <PasswordInput
               name="confirmPassword"
               label="Confirm password"
-              placeholder="*********"
+              placeholder="********"
               control={control}
               rules={{
                 required: 'Repeat password is required',

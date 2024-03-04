@@ -18,6 +18,10 @@ const userSchema = new mongoose.Schema({
   profilePicture: {
     type: String,
     default: 'https://freeiconshop.com/wp-content/uploads/edd/chef-flat.png'
+  },
+  isGoogleUser: {
+    type: Boolean,
+    default: false
   }
 }, { timestamps: true });
 

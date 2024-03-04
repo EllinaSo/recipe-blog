@@ -30,17 +30,18 @@ export const updateUser = async (req, res, next) => {
     if (usernameError) {
       return next(errorHandler(400, usernameError));
     }
-
-    body.password = bcryptjs.hashSync(body.password, 10);
   }
 
   try {
+    const currentUser = await User.findById(params.userId);
+    const isGoogleUser = currentUser.isGoogleUser || false;
+
     const updatedUser = await User.findByIdAndUpdate(params.userId, {
       $set: {
         username: body.username,
-        email: body.email,
+        email: isGoogleUser ? currentUser.email : body.email,
         profilePicture: body.profilePicture,
-        password: body.password
+        password: isGoogleUser ? currentUser.password : body.password
       }
     }, { new: true });
     const { password, ...userData } = updatedUser._doc;

@@ -16,6 +16,7 @@ import {
 } from '../../../../utils/userValidation';
 import { TextInput, PasswordInput, ImageInput } from '../../../../components/FormFields';
 import { setUserToStorage } from '../../../../utils/auth';
+import { handleAxiosError } from '../../../../utils/error';
 
 import DeleteAccountControl from '../DeleteAccountControl';
 
@@ -41,10 +42,12 @@ const Form = () => {
   });
 
   const handleOnSubmit = (userData) =>
-    updateUserData({ data: userData }).then(({ data }) => {
-      setUserToStorage(data);
-      updateContext({ profile: data });
-    });
+    updateUserData({ data: userData })
+      .then(({ data }) => {
+        setUserToStorage(data);
+        updateContext({ profile: data });
+      })
+      .catch(handleAxiosError);
 
   return (
     <form onSubmit={handleSubmit(handleOnSubmit)}>

@@ -42,7 +42,6 @@ const DeleteAccountControl = () => {
         removeUserFromStorage();
         updateContext({ profile: null });
         navigate('/');
-        console.log(data);
         handleSuccess(data);
       })
       .catch(handleAxiosError);

@@ -8,6 +8,7 @@ import MenuItem from '@mui/material/MenuItem';
 import ListItemText from '@mui/material/ListItemText';
 import Divider from '@mui/material/Divider';
 
+import AddRecipeControl from '../AddRecipeControl';
 import SignOutControl from '../SignOutControl';
 import UserListItem from '../UserListItem';
 
@@ -38,6 +39,8 @@ const UserMenu = ({ username, profilePicture, email, links }) => {
         <UserListItem username={username} email={email} />
 
         <Divider />
+
+        <AddRecipeControl />
 
         {links.map(({ path, title }) => (
           <MenuItem key={path} component={RouterLink} to={path} onClick={handleCloseUserMenu}>

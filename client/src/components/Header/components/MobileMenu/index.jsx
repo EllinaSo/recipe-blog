@@ -7,6 +7,7 @@ import ListItem from '@mui/material/ListItem';
 import ListItemText from '@mui/material/ListItemText';
 import ListItemButton from '@mui/material/ListItemButton';
 import ListItemIcon from '@mui/material/ListItemIcon';
+import MenuItem from '@mui/material/MenuItem';
 import Box from '@mui/material/Box';
 import IconButton from '@mui/material/IconButton';
 import MenuIcon from '@mui/icons-material/Menu';
@@ -15,6 +16,7 @@ import LoginIcon from '@mui/icons-material/Login';
 import { SIGN_IN } from '../../../../constants';
 
 import SignOutControl from '../SignOutControl';
+import AddRecipeControl from '../AddRecipeControl';
 import UserListItem from '../UserListItem';
 
 const MobileMenu = ({ links, user, userLinks }) => {
@@ -58,12 +60,12 @@ const MobileMenu = ({ links, user, userLinks }) => {
             <List>
               <UserListItem {...user} />
 
+              <AddRecipeControl />
+
               {userLinks.map(({ title, path }) => (
-                <ListItem key={title} disablePadding>
-                  <ListItemButton component={RouterLink} to={path}>
-                    <ListItemText primary={title} />
-                  </ListItemButton>
-                </ListItem>
+                <MenuItem key={title} component={RouterLink} to={path} disablePadding>
+                  <ListItemText primary={title} />
+                </MenuItem>
               ))}
 
               <SignOutControl />

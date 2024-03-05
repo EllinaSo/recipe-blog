@@ -45,5 +45,21 @@ export default createTheme({
         },
       },
     },
+    MuiAutocomplete: {
+      defaultProps: {
+        slotProps: {
+          paper: {
+            elevation: 2,
+          },
+        },
+      },
+    },
+    MuiFormHelperText: {
+      styleOverrides: {
+        root: {
+          color: textColor,
+        },
+      },
+    },
   },
 });

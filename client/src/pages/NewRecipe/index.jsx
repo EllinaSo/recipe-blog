@@ -8,19 +8,17 @@ import Button from '@mui/material/Button';
 
 import { TextInput } from '../../components/FormFields';
 import Ingredients from './components/Ingredients';
+import Categories from './components/Categories';
 
 const NewRecipe = () => {
   const { control, handleSubmit } = useForm({
-    defaultValues: {
-      password: '',
-      confirmPassword: '',
-      email: '',
-      ingredients: [{ value: '' }],
-    },
+    defaultValues: { ingredients: [{ value: '' }] },
     mode: 'onChange',
   });
 
-  const handleOnSubmit = () => {};
+  const handleOnSubmit = (data) => {
+    console.log(data);
+  };
 
   return (
     <Container maxWidth="md" sx={{ py: { xs: 4, md: 6 } }}>
@@ -54,9 +52,15 @@ const NewRecipe = () => {
                 rows={2}
               />
             </Grid>
-            {/* <Grid item xs={12}>
-             TBD Category ( Cuisine Type, Dietary Restrictions)
-            </Grid> */}
+            <Grid item xs={12}>
+              <Categories
+                control={control}
+                name="categories"
+                label="Categories"
+                helperText="Choose from existing ones or create new. It can be a cuisine type or dietary restrictions"
+                rules={{ required: 'At least one category is required' }}
+              />
+            </Grid>
             <Grid item xs={12}>
               <Typography mb={1} fontWeight="medium">
                 Preparation time:
@@ -96,9 +100,7 @@ const NewRecipe = () => {
             <Grid item xs={12}>
               <Ingredients control={control} name="ingredients" rules={{ required: 'Ingredients can not be empty' }} />
             </Grid>
-            {/* <Grid item xs={12}>
-             Instructions
-            </Grid> */}
+
             <Grid item xs={12}>
               <TextInput name="note" label="Note" placeholder="Recipe note" control={control} multiline rows={2} />
             </Grid>

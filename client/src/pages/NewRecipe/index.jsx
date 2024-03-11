@@ -1,5 +1,4 @@
 import { useForm } from 'react-hook-form';
-
 import Grid from '@mui/material/Grid';
 import Container from '@mui/material/Container';
 import Paper from '@mui/material/Paper';
@@ -9,10 +8,16 @@ import Button from '@mui/material/Button';
 import { TextInput } from '../../components/FormFields';
 import Ingredients from './components/Ingredients';
 import Categories from './components/Categories';
+import Instructions from './components/Instructions';
+import Preview from './components/Preview';
 
 const NewRecipe = () => {
-  const { control, handleSubmit } = useForm({
-    defaultValues: { ingredients: [{ value: '' }] },
+  const {
+    control,
+    handleSubmit,
+    formState: { isSubmitted },
+  } = useForm({
+    defaultValues: { ingredients: [{ value: '' }], instructions: [{ value: '' }], preview: '' },
     mode: 'onChange',
   });
 
@@ -29,9 +34,14 @@ const NewRecipe = () => {
 
         <form onSubmit={handleSubmit(handleOnSubmit)}>
           <Grid container spacing={2}>
-            {/* <Grid item xs={12}>
-              TBD Image/Photo (for uploading a picture of the dish)
-            </Grid> */}
+            <Grid item xs={12}>
+              <Preview
+                control={control}
+                name="preview"
+                rules={{ required: 'Dish photo is required' }}
+                isSubmitted={isSubmitted}
+              />
+            </Grid>
             <Grid item xs={12}>
               <TextInput
                 name="title"
@@ -99,6 +109,14 @@ const NewRecipe = () => {
 
             <Grid item xs={12}>
               <Ingredients control={control} name="ingredients" rules={{ required: 'Ingredients can not be empty' }} />
+            </Grid>
+
+            <Grid item xs={12}>
+              <Instructions
+                control={control}
+                name="instructions"
+                rules={{ required: 'Instructions can not be empty' }}
+              />
             </Grid>
 
             <Grid item xs={12}>

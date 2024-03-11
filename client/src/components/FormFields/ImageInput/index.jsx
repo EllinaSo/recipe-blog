@@ -1,21 +1,15 @@
 import { useRef, useState } from 'react';
 import { getDownloadURL, getStorage, ref, uploadBytesResumable } from 'firebase/storage';
 import { Controller } from 'react-hook-form';
-import CircularProgress from '@mui/material/CircularProgress';
-import Avatar from '@mui/material/Avatar';
-import Stack from '@mui/material/Stack';
 import Button from '@mui/material/Button';
-import Box from '@mui/material/Box';
-import Typography from '@mui/material/Typography';
 
 import { app } from '../../../firebase';
 import { handleError } from '../../../utils/error';
 import VisuallyHiddenInput from '../VisuallyHiddenInput';
 
 const MB_SIZE_LIMIT = 2;
-const SIZE = 60;
 
-export const ImageInput = ({ control, rules, label, name }) => {
+export const ImageInput = ({ control, rules, label, name, renderPreview }) => {
   const fileInputRef = useRef();
 
   const [loading, setLoading] = useState(0);
@@ -28,12 +22,11 @@ export const ImageInput = ({ control, rules, label, name }) => {
       control={control}
       rules={{
         ...rules,
-        required: true,
         validate: {
-          isSuccessfullyLoaded: (v) => v.startsWith('http') || 'The avatar has not been uploaded',
+          isSuccessfullyLoaded: (v) => (rules?.required ? v.startsWith('http') || 'Image has not been uploaded' : true),
         },
       }}
-      render={({ field, formState, fieldState: { error }, formState: { isSubmitted } }) => {
+      render={({ field, formState, fieldState: { error } }) => {
         const handleImageChange = (e) => {
           const file = e.target.files[0];
           if (!file) {
@@ -68,41 +61,24 @@ export const ImageInput = ({ control, rules, label, name }) => {
           }
         };
 
-        return (
-          <Stack direction="row" gap={1} alignItems="center">
-            <Box position="relative">
-              <Avatar
-                src={typeof field.value === 'string' ? field.value : URL.createObjectURL(field.value)}
-                sx={{ width: SIZE, height: SIZE }}
-                alt="User avatar"
+        return renderPreview({
+          src: typeof field.value === 'string' ? field.value : URL.createObjectURL(field.value),
+          loading,
+          error: error?.message,
+          control: (
+            <Button variant="text" component="label" role={undefined} tabIndex={-1}>
+              {label}
+              <VisuallyHiddenInput
+                hidden
+                type="file"
+                accept="image/*"
+                onChange={handleImageChange}
+                ref={fileInputRef}
+                name={name}
               />
-              <CircularProgress
-                variant="determinate"
-                value={loading}
-                size={SIZE}
-                sx={{ position: 'absolute', top: 0, left: 0 }}
-              />
-            </Box>
-            <div>
-              <Button variant="text" component="label" role={undefined} tabIndex={-1}>
-                {label}
-                <VisuallyHiddenInput
-                  hidden
-                  type="file"
-                  accept="image/*"
-                  onChange={handleImageChange}
-                  ref={fileInputRef}
-                  name={name}
-                />
-              </Button>
-              {!!(isSubmitted && error) && (
-                <Typography color="error" variant="caption" as="p" ml={1}>
-                  {error.message}
-                </Typography>
-              )}
-            </div>
-          </Stack>
-        );
+            </Button>
+          ),
+        });
       }}
     />
   );

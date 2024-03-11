@@ -1,10 +1,13 @@
+import { useCallback } from 'react';
 import useAxios from 'axios-hooks';
 import { useForm } from 'react-hook-form';
 import Stack from '@mui/material/Stack';
 import Grid from '@mui/material/Grid';
 import Button from '@mui/material/Button';
 import Box from '@mui/material/Box';
+import Avatar from '@mui/material/Avatar';
 import CircularProgress from '@mui/material/CircularProgress';
+import Typography from '@mui/material/Typography';
 
 import { useContextData } from '../../../../context';
 import {
@@ -21,6 +24,8 @@ import { handleSuccess } from '../../../../utils/success';
 
 import DeleteAccountControl from '../DeleteAccountControl';
 
+const SIZE = 60;
+
 const Form = () => {
   const {
     updateContext,
@@ -32,7 +37,11 @@ const Form = () => {
     method: 'PUT',
   });
 
-  const { control, handleSubmit } = useForm({
+  const {
+    control,
+    handleSubmit,
+    formState: { isSubmitted },
+  } = useForm({
     defaultValues: {
       profilePicture,
       email,
@@ -91,7 +100,36 @@ const Form = () => {
           </Grid>
         )}
         <Grid item xs={12}>
-          <ImageInput label="Upload avatar" control={control} name="profilePicture" />
+          <ImageInput
+            label="Upload avatar"
+            control={control}
+            name="profilePicture"
+            rules={{ required: true }}
+            renderPreview={useCallback(
+              ({ loading, src, control, error }) => (
+                <Stack direction="row" gap={1} alignItems="center">
+                  <Box position="relative">
+                    <Avatar src={src} sx={{ width: SIZE, height: SIZE }} alt="User avatar" />
+                    <CircularProgress
+                      variant="determinate"
+                      value={loading}
+                      size={SIZE}
+                      sx={{ position: 'absolute', top: 0, left: 0 }}
+                    />
+                  </Box>
+                  <div>
+                    {control}
+                    {!!(isSubmitted && error) && (
+                      <Typography color="error" variant="caption" as="p" ml={1}>
+                        {error}
+                      </Typography>
+                    )}
+                  </div>
+                </Stack>
+              ),
+              [isSubmitted]
+            )}
+          />
         </Grid>
       </Grid>
 

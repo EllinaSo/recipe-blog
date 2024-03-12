@@ -1,17 +1,24 @@
+import useAxios from 'axios-hooks';
 import { useForm } from 'react-hook-form';
+import { useNavigate } from 'react-router-dom';
 import Grid from '@mui/material/Grid';
 import Container from '@mui/material/Container';
 import Paper from '@mui/material/Paper';
 import Typography from '@mui/material/Typography';
 import Button from '@mui/material/Button';
+import CircularProgress from '@mui/material/CircularProgress';
 
+import { handleAxiosError } from '../../utils/error';
+import { handleSuccess } from '../../utils/success';
 import { TextInput } from '../../components/FormFields';
+
 import Ingredients from './components/Ingredients';
 import Categories from './components/Categories';
 import Instructions from './components/Instructions';
 import Preview from './components/Preview';
 
 const NewRecipe = () => {
+  const navigate = useNavigate();
   const {
     control,
     handleSubmit,
@@ -21,8 +28,39 @@ const NewRecipe = () => {
     mode: 'onChange',
   });
 
-  const handleOnSubmit = (data) => {
-    console.log(data);
+  const [{ loading }, createRecipe] = useAxios({
+    url: 'api/recipe/create',
+    method: 'POST',
+  });
+
+  const handleOnSubmit = ({ ingredients, instructions, categories, ...data }) => {
+    const { existingList, newList } = categories.reduce(
+      ({ existingList, newList }, category) => {
+        console.log(existingList, newList);
+        if (category.create) {
+          newList.push(category.name);
+        } else {
+          existingList.push(category.id);
+        }
+        return { existingList, newList };
+      },
+      { existingList: [], newList: [] }
+    );
+
+    createRecipe({
+      data: {
+        ...data,
+        ingredients: ingredients.map(({ value }) => value),
+        instructions: instructions.map(({ value }) => value),
+        categories: existingList,
+        newCategories: newList,
+      },
+    })
+      .then(() => {
+        handleSuccess('New recipe successfully created');
+        navigate.push('/');
+      })
+      .catch(handleAxiosError);
   };
 
   return (
@@ -130,20 +168,15 @@ const NewRecipe = () => {
                 variant="contained"
                 fullWidth
                 type="submit"
-                // disabled={loading}
-                // endIcon={loading ? <CircularProgress color="inherit" size={14} /> : null}
+                disabled={loading}
+                endIcon={loading ? <CircularProgress color="inherit" size={14} /> : null}
               >
                 Create
               </Button>
             </Grid>
 
             <Grid item xs={12} sm={6}>
-              <Button
-                variant="outlined"
-                fullWidth
-                type="button"
-                // disabled={loading}
-              >
+              <Button variant="outlined" fullWidth type="button" disabled={loading}>
                 Clear
               </Button>
             </Grid>

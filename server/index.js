@@ -6,6 +6,7 @@ import cookieParser from 'cookie-parser';
 
 import userRoutes from './routes/user.route.js';
 import authRoutes from './routes/auth.route.js';
+import recipeRoutes from './routes/recipe.route.js';
 import errorHandlerMiddleware from './middlewares/error.middleware.js';
 
 dotenv.config();
@@ -26,5 +27,6 @@ mongoose.connect(process.env.MONGODB_CONNECTION_STRING)
 
 app.use('/api/user', userRoutes);
 app.use('/api/auth', authRoutes);
+app.use('/api/recipe', recipeRoutes);
 
 app.use(errorHandlerMiddleware);

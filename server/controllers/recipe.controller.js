@@ -13,7 +13,7 @@ export const create = async (req, res, next) => {
     return next(errorHandler(400, 'Please provide all required fields'));
   }
 
-  let newCategoriesId;
+  let newCategoriesId = [];
   if (newCategories.length) {
     try {
       const savedCategories = await Category.insertMany(newCategories.map(category => ({ name: category })));

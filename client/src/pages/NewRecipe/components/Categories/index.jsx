@@ -2,11 +2,12 @@ import { useState, useCallback } from 'react';
 import { Controller } from 'react-hook-form';
 
 import TextField from '@mui/material/TextField';
+import CircularProgress from '@mui/material/CircularProgress';
 import Autocomplete, { createFilterOptions } from '@mui/material/Autocomplete';
 
 const filter = createFilterOptions();
 
-export const Categories = ({ list = [], name: fieldName, control, rules, helperText, ...props }) => {
+export const Categories = ({ list = [], error, loading, name: fieldName, control, rules, helperText, ...props }) => {
   const [selected, setSelected] = useState([]);
 
   const getOptionLabel = useCallback((option) => {
@@ -44,7 +45,7 @@ export const Categories = ({ list = [], name: fieldName, control, rules, helperT
       name={fieldName}
       control={control}
       rules={rules}
-      render={({ field, fieldState: { error } }) => (
+      render={({ field, fieldState: { error: fieldError } }) => (
         <Autocomplete
           freeSolo
           multiple
@@ -61,9 +62,18 @@ export const Categories = ({ list = [], name: fieldName, control, rules, helperT
             <TextField
               {...props}
               {...params}
+              InputProps={{
+                ...params.InputProps,
+                endAdornment: (
+                  <>
+                    {loading ? <CircularProgress color="inherit" size={20} /> : null}
+                    {params.InputProps.endAdornment}
+                  </>
+                ),
+              }}
               name={fieldName}
-              error={!!error}
-              helperText={error ? error.message : helperText}
+              error={!!(fieldError || error)}
+              helperText={fieldError || error ? error || fieldError.message : helperText}
             />
           )}
           onChange={(event, newValue, reason, details) => {

@@ -1,3 +1,4 @@
+import { useEffect } from 'react';
 import useAxios from 'axios-hooks';
 import { useForm } from 'react-hook-form';
 import { useNavigate } from 'react-router-dom';
@@ -28,6 +29,15 @@ const NewRecipe = () => {
     mode: 'onChange',
   });
 
+  const [{ loading: categoriesLoading, data: categories, error: categoriesError }, getCategories] = useAxios({
+    url: 'api/categories',
+    method: 'GET',
+  });
+
+  useEffect(() => {
+    getCategories();
+  }, []);
+
   const [{ loading }, createRecipe] = useAxios({
     url: 'api/recipe/create',
     method: 'POST',
@@ -36,11 +46,10 @@ const NewRecipe = () => {
   const handleOnSubmit = ({ ingredients, instructions, categories, ...data }) => {
     const { existingList, newList } = categories.reduce(
       ({ existingList, newList }, category) => {
-        console.log(existingList, newList);
         if (category.create) {
           newList.push(category.name);
         } else {
-          existingList.push(category.id);
+          existingList.push(category._id);
         }
         return { existingList, newList };
       },
@@ -58,7 +67,7 @@ const NewRecipe = () => {
     })
       .then(() => {
         handleSuccess('New recipe successfully created');
-        navigate.push('/');
+        navigate('/');
       })
       .catch(handleAxiosError);
   };
@@ -107,6 +116,9 @@ const NewRecipe = () => {
                 label="Categories"
                 helperText="Choose from existing ones or create new. It can be a cuisine type or dietary restrictions"
                 rules={{ required: 'At least one category is required' }}
+                loading={categoriesLoading}
+                error={categoriesError ? 'Failed to load categories' : null}
+                list={categories}
               />
             </Grid>
             <Grid item xs={12}>

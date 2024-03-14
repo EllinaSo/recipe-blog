@@ -58,24 +58,33 @@ const DashboardRecipes = () => {
 
   return (
     <Container maxWidth="xl">
-      <Paper>
+      <Paper
+        sx={{
+          overflow: 'hidden',
+          height: '80vh',
+          display: 'flex',
+          flexDirection: 'column',
+          justifyContent: 'space-between',
+        }}
+      >
         {recipesLoading || categoriesLoading ? (
-          <CircularProgress />
+          <CircularProgress sx={{ mt: 2, ml: 2 }} />
         ) : (
           <>
             <TableContainer>
-              <Table sx={{ minWidth: 650 }} aria-label="Recipes list">
+              <Table stickyHeader sx={{ minWidth: 650 }} aria-label="Recipes list">
                 <TableHead>
                   <TableRow>
-                    <TableCell width="15%">Preview</TableCell>
+                    <TableCell width="10%">Preview</TableCell>
                     <TableCell width="30%">Title</TableCell>
                     <TableCell width="30%">Categories</TableCell>
+                    <TableCell width="10%">Created</TableCell>
                     <TableCell width="10%">Updated</TableCell>
-                    <TableCell width="15%" align="right"></TableCell>
+                    <TableCell width="10%" align="right"></TableCell>
                   </TableRow>
                 </TableHead>
                 <TableBody>
-                  {list.map(({ _id, title, updatedAt, preview, categories }) => (
+                  {list.map(({ _id, title, updatedAt, createdAt, preview, categories }) => (
                     <TableRow key={_id}>
                       <TableCell>
                         <Box maxWidth={100}>
@@ -90,6 +99,7 @@ const DashboardRecipes = () => {
                           ))}
                         </Stack>
                       </TableCell>
+                      <TableCell>{format(createdAt, 'd MMM yyyy')}</TableCell>
                       <TableCell>{format(updatedAt, 'd MMM yyyy')}</TableCell>
                       <TableCell align="right">
                         <IconButton aria-label="Edit recipe">
@@ -105,6 +115,7 @@ const DashboardRecipes = () => {
               </Table>
             </TableContainer>
             <TablePagination
+              sx={{ flexShrink: 0 }}
               rowsPerPageOptions={[6, 10, 20]}
               component="div"
               count={total}

@@ -17,6 +17,12 @@ export const DASHBOARD_LINKS = [
   {
     path: '/dashboard/profile',
     title: 'Profile',
+    adminPage: false,
+  },
+  {
+    path: '/dashboard/recipes',
+    title: 'Recipes',
+    adminPage: true,
   },
 ];
 

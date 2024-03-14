@@ -1,3 +1,4 @@
+import { useMemo } from 'react';
 import { Link as RouterLink } from 'react-router-dom';
 import AppBar from '@mui/material/AppBar';
 import Container from '@mui/material/Container';
@@ -14,10 +15,13 @@ import MobileMenu from './components/MobileMenu';
 import SearchField from './components/SearchField';
 import UserMenu from './components/UserMenu';
 
-const USER_LINKS = DASHBOARD_LINKS.slice(0, 2);
-
 const Header = () => {
   const { profile } = useContextData();
+
+  const [links, shortedLinks] = useMemo(() => {
+    const links = profile?.isAdmin ? DASHBOARD_LINKS : DASHBOARD_LINKS.filter(({ adminPage }) => !adminPage);
+    return [links, links.slice(0, 2)];
+  }, [profile?.isAdmin]);
 
   return (
     <AppBar elevation={0} position="sticky">
@@ -42,7 +46,7 @@ const Header = () => {
           <Box sx={{ ml: 'auto', display: { xs: 'block', md: 'none' } }}>
             <MobileMenu
               links={LINKS}
-              userLinks={DASHBOARD_LINKS}
+              userLinks={links}
               user={
                 profile
                   ? { email: profile.email, username: profile.username, profilePicture: profile.profilePicture }
@@ -57,7 +61,7 @@ const Header = () => {
                 profilePicture={profile.profilePicture}
                 username={profile.username}
                 email={profile.email}
-                links={USER_LINKS}
+                links={shortedLinks}
               />
             ) : (
               <Button

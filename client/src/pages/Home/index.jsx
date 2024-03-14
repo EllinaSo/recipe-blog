@@ -7,7 +7,7 @@ import CircularProgress from '@mui/material/CircularProgress';
 import RecipeCard from '../../components/RecipeCard';
 
 const Home = () => {
-  const [{ loading: recipesLoading, data: recipes = [] }, getRecipes] = useAxios({
+  const [{ loading: recipesLoading, data: { recipes = [] } = {} }, getRecipes] = useAxios({
     url: `api/recipes`,
     method: 'GET',
   });
@@ -23,17 +23,13 @@ const Home = () => {
 
   const list = useMemo(
     () =>
-      recipes.map((recipe) => {
-        console.log(recipe.categories);
-        return {
-          ...recipe,
-          categories:
-            recipe.categories.map((recipeCategoryId) => categories.find(({ _id }) => _id === recipeCategoryId)) || null,
-        };
-      }),
+      recipes.map((recipe) => ({
+        ...recipe,
+        categories:
+          recipe.categories.map((recipeCategoryId) => categories.find(({ _id }) => _id === recipeCategoryId)) || null,
+      })),
     [categories, recipes]
   );
-  console.log(recipes);
 
   return (
     <Container maxWidth="xl">
@@ -42,7 +38,7 @@ const Home = () => {
       ) : (
         <Grid container spacing={3}>
           {list.map((recipe) => (
-            <Grid container item xs={4} key={recipe._id}>
+            <Grid container item xs={12} sm={6} md={4} key={recipe._id}>
               <RecipeCard {...recipe} />
             </Grid>
           ))}

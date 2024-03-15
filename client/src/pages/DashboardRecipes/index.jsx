@@ -10,6 +10,7 @@ import TableRow from '@mui/material/TableRow';
 import TablePagination from '@mui/material/TablePagination';
 import Paper from '@mui/material/Paper';
 import IconButton from '@mui/material/IconButton';
+import Typography from '@mui/material/Typography';
 import Container from '@mui/material/Container';
 import Chip from '@mui/material/Chip';
 import Stack from '@mui/material/Stack';
@@ -18,15 +19,22 @@ import CircularProgress from '@mui/material/CircularProgress';
 import DeleteIcon from '@mui/icons-material/Delete';
 import EditIcon from '@mui/icons-material/Edit';
 
+import { useContextData } from '../../context';
+
 const DashboardRecipes = () => {
+  const {
+    profile: { _id: id },
+  } = useContextData();
+
   const [startIndex, setStartIndex] = useState(0);
   const [limit, setLimit] = useState(6);
 
-  const [{ loading: recipesLoading, data: { recipes = [], total = 1 } = {} }, getRecipes] = useAxios({
-    url: `api/recipes`,
-    method: 'GET',
-  });
-  const [{ loading: categoriesLoading, data: categories = [] }, getCategories] = useAxios({
+  const [{ error: recipesError, loading: recipesLoading, data: { recipes = [], total = 1 } = {} }, getRecipes] =
+    useAxios({
+      url: `api/recipes`,
+      method: 'GET',
+    });
+  const [{ error: categoriesError, loading: categoriesLoading, data: categories = [] }, getCategories] = useAxios({
     url: `api/categories`,
     method: 'GET',
   });
@@ -36,7 +44,7 @@ const DashboardRecipes = () => {
   }, []);
 
   useEffect(() => {
-    getRecipes({ params: { limit, startIndex } });
+    getRecipes({ params: { limit, startIndex, userId: id } });
   }, [limit, startIndex]);
 
   const list = useMemo(
@@ -56,6 +64,65 @@ const DashboardRecipes = () => {
     setStartIndex(0);
   };
 
+  const loading = recipesLoading || categoriesLoading;
+  const error = recipesError || categoriesError;
+
+  const content = useMemo(() => {
+    if (loading) {
+      return (
+        <TableRow>
+          <TableCell colspan="7">
+            <CircularProgress size={20} />
+          </TableCell>
+        </TableRow>
+      );
+    }
+    if (error) {
+      return (
+        <TableRow>
+          <TableCell colspan="7">
+            <Typography variant="body2" color="error">
+              Something went wrong! Try again later
+            </Typography>
+          </TableCell>
+        </TableRow>
+      );
+    }
+    return list.length && categories.length ? (
+      list.map(({ _id, title, updatedAt, createdAt, preview, categories }) => (
+        <TableRow key={_id}>
+          <TableCell>
+            <Box maxWidth={100}>
+              <img src={preview} alt={`Preview of ${title}`} width="100%" />
+            </Box>
+          </TableCell>
+          <TableCell sx={{ fontWeight: 'bold' }}>{title}</TableCell>
+          <TableCell>
+            <Stack direction="row" gap={1} flexWrap="wrap">
+              {categories.map((category) => (
+                <Chip key={category._id} label={category.name} size="small" />
+              ))}
+            </Stack>
+          </TableCell>
+          <TableCell>{format(createdAt, 'd MMM yyyy')}</TableCell>
+          <TableCell>{format(updatedAt, 'd MMM yyyy')}</TableCell>
+          <TableCell align="right">
+            <IconButton aria-label="Edit recipe">
+              <EditIcon />
+            </IconButton>
+            <IconButton aria-label="Delete recipe">
+              <DeleteIcon />
+            </IconButton>
+          </TableCell>
+        </TableRow>
+      ))
+    ) : (
+      <TableRow>
+        <TableCell colspan="7">You have no recipes yet!</TableCell>
+      </TableRow>
+    );
+  }, [loading]);
+
   return (
     <Container maxWidth="xl">
       <Paper
@@ -67,64 +134,33 @@ const DashboardRecipes = () => {
           justifyContent: 'space-between',
         }}
       >
-        {recipesLoading || categoriesLoading ? (
-          <CircularProgress sx={{ mt: 2, ml: 2 }} />
-        ) : (
-          <>
-            <TableContainer>
-              <Table stickyHeader sx={{ minWidth: 650 }} aria-label="Recipes list">
-                <TableHead>
-                  <TableRow>
-                    <TableCell width="10%">Preview</TableCell>
-                    <TableCell width="30%">Title</TableCell>
-                    <TableCell width="30%">Categories</TableCell>
-                    <TableCell width="10%">Created</TableCell>
-                    <TableCell width="10%">Updated</TableCell>
-                    <TableCell width="10%" align="right"></TableCell>
-                  </TableRow>
-                </TableHead>
-                <TableBody>
-                  {list.map(({ _id, title, updatedAt, createdAt, preview, categories }) => (
-                    <TableRow key={_id}>
-                      <TableCell>
-                        <Box maxWidth={100}>
-                          <img src={preview} alt={`Preview of ${title}`} width="100%" />
-                        </Box>
-                      </TableCell>
-                      <TableCell sx={{ fontWeight: 'bold' }}>{title}</TableCell>
-                      <TableCell>
-                        <Stack direction="row" gap={1} flexWrap="wrap">
-                          {categories.map((category) => (
-                            <Chip key={category._id} label={category.name} size="small" />
-                          ))}
-                        </Stack>
-                      </TableCell>
-                      <TableCell>{format(createdAt, 'd MMM yyyy')}</TableCell>
-                      <TableCell>{format(updatedAt, 'd MMM yyyy')}</TableCell>
-                      <TableCell align="right">
-                        <IconButton aria-label="Edit recipe">
-                          <EditIcon />
-                        </IconButton>
-                        <IconButton aria-label="Delete recipe">
-                          <DeleteIcon />
-                        </IconButton>
-                      </TableCell>
-                    </TableRow>
-                  ))}
-                </TableBody>
-              </Table>
-            </TableContainer>
-            <TablePagination
-              sx={{ flexShrink: 0 }}
-              rowsPerPageOptions={[6, 10, 20]}
-              component="div"
-              count={total}
-              rowsPerPage={limit}
-              page={startIndex}
-              onPageChange={handleChangePage}
-              onRowsPerPageChange={handleChangeRowsPerPage}
-            />
-          </>
+        <TableContainer>
+          <Table stickyHeader sx={{ minWidth: 650 }} aria-label="Recipes list">
+            <TableHead>
+              <TableRow>
+                <TableCell width="10%">Preview</TableCell>
+                <TableCell width="30%">Title</TableCell>
+                <TableCell width="30%">Categories</TableCell>
+                <TableCell width="10%">Created</TableCell>
+                <TableCell width="10%">Updated</TableCell>
+                <TableCell width="10%" align="right"></TableCell>
+              </TableRow>
+            </TableHead>
+
+            <TableBody>{content}</TableBody>
+          </Table>
+        </TableContainer>
+        {!!list.length && !categoriesError && (
+          <TablePagination
+            sx={{ flexShrink: 0 }}
+            rowsPerPageOptions={[6, 10, 20]}
+            component="div"
+            count={total}
+            rowsPerPage={limit}
+            page={startIndex}
+            onPageChange={handleChangePage}
+            onRowsPerPageChange={handleChangeRowsPerPage}
+          />
         )}
       </Paper>
     </Container>

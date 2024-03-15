@@ -2,9 +2,11 @@ import { useEffect, useMemo } from 'react';
 import useAxios from 'axios-hooks';
 import Grid from '@mui/material/Grid';
 import Container from '@mui/material/Container';
+import Typography from '@mui/material/Typography';
 import CircularProgress from '@mui/material/CircularProgress';
 
 import RecipeCard from '../../components/RecipeCard';
+import Banner from './components/Banner';
 
 const Home = () => {
   const [{ loading: recipesLoading, data: { recipes = [] } = {} }, getRecipes] = useAxios({
@@ -33,6 +35,10 @@ const Home = () => {
 
   return (
     <Container maxWidth="xl">
+      <Banner />
+      <Typography as="h2" sx={{ typography: { xs: 'h6', md: 'h5' } }} mb={2}>
+        New Recipes
+      </Typography>
       {recipesLoading || categoriesLoading ? (
         <CircularProgress />
       ) : (

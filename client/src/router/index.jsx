@@ -4,6 +4,7 @@ import Auth from '../pages/Auth';
 import Dashboard from '../pages/Dashboard';
 import Profile from '../pages/Profile';
 import NewRecipe from '../pages/NewRecipe';
+import RecipeDetail from '../pages/RecipeDetail';
 import DashboardRecipes from '../pages/DashboardRecipes';
 import DashboardLayout from '../components/DashboardLayout';
 import Layout from '../components/Layout';
@@ -46,6 +47,10 @@ export default createBrowserRouter([
         path: 'new-recipe',
         Component: NewRecipe,
         loader: () => (getUserFromStorage()?.isAdmin ? null : redirect('/')),
+      },
+      {
+        path: 'recipes/:id',
+        Component: RecipeDetail,
       },
     ],
   },

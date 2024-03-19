@@ -39,3 +39,12 @@ export const create = async (req, res, next) => {
     next(error);
   }
 };
+
+export const get = async (req, res, next) => {
+  try {
+    const recipe = await Recipe.findById(req.params.id);
+    res.status(200).json(recipe);
+  } catch (error) {
+    return next(errorHandler(404, 'Recipe not found. Try again later'));
+  }
+};

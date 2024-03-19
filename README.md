@@ -5,9 +5,11 @@
 This project is a blog MERN application that allows admin to post recipes. The purpose of this project is learning MERN stack. This project was created by following [React & Next js Projects with Sahand channel's tutorial](https://www.youtube.com/watch?v=Kkht2mwSL_I) with desired improvements. Functionality:
 
 - **Sign in / Sign up page**: Email + Password or Google OAuth 
+- **Home page**: banner and list of recent recipes
 - **New recipe page** (only for Admin user)
 - **Dashboard Section**:
 -- **User profile page**: changing user data such as email, avatar and etc. 
+-- **Recipe list**: list with all user's recipes with action buttons 
 
 ### Technologies and Tools
 

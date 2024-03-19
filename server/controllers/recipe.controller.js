@@ -48,3 +48,16 @@ export const get = async (req, res, next) => {
     return next(errorHandler(404, 'Recipe not found. Try again later'));
   }
 };
+
+export const remove = async (req, res, next) => {
+  if (!req.user.isAdmin) {
+    return next(errorHandler(403, 'You are not allowed to delete this recipe'));
+  }
+
+  try {
+    await Recipe.findByIdAndDelete(req.params.id);
+    res.status(200).json('The recipe has been deleted');
+  } catch (error) {
+    return next(errorHandler(404, 'Recipe not found. Try again later'));
+  }
+};

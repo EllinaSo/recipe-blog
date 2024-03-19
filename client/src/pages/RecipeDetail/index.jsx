@@ -1,7 +1,8 @@
 import { useEffect, useMemo } from 'react';
 import useAxios from 'axios-hooks';
-import { useNavigate, useParams } from 'react-router-dom';
+import { useNavigate, useParams, Link as RouterLink } from 'react-router-dom';
 import Stack from '@mui/material/Stack';
+import Button from '@mui/material/Button';
 import Box from '@mui/material/Box';
 import Container from '@mui/material/Container';
 import Paper from '@mui/material/Paper';
@@ -9,6 +10,7 @@ import Typography from '@mui/material/Typography';
 import Divider from '@mui/material/Divider';
 import CircularProgress from '@mui/material/CircularProgress';
 import { orange } from '@mui/material/colors';
+import NavigateBeforeIcon from '@mui/icons-material/NavigateBefore';
 
 import { handleError } from '../../utils/error';
 import CategoriesList from '../../components/CategoriesList';
@@ -75,6 +77,9 @@ const RecipeDetail = () => {
 
   return (
     <Container maxWidth="md">
+      <Button component={RouterLink} to="/" startIcon={<NavigateBeforeIcon />} sx={{ mb: 2 }}>
+        Back
+      </Button>
       <Paper sx={{ p: { xs: 3, sm: 6 } }}>
         {loading || !data ? (
           <CircularProgress />

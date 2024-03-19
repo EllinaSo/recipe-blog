@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useState } from 'react';
+import { useCallback, useEffect, useMemo, useState } from 'react';
 import { format } from 'date-fns';
 import { Link as RouterLink } from 'react-router-dom';
 import useAxios from 'axios-hooks';
@@ -16,11 +16,12 @@ import Container from '@mui/material/Container';
 import Box from '@mui/material/Box';
 import Link from '@mui/material/Link';
 import CircularProgress from '@mui/material/CircularProgress';
-import DeleteIcon from '@mui/icons-material/Delete';
 import EditIcon from '@mui/icons-material/Edit';
 
 import { useContextData } from '../../context';
 import CategoriesList from '../../components/CategoriesList';
+
+import DeletePostControl from './components/DeletePostControl';
 
 const DashboardRecipes = () => {
   const {
@@ -44,8 +45,13 @@ const DashboardRecipes = () => {
     getCategories();
   }, []);
 
+  const updateRecipes = useCallback(
+    () => getRecipes({ params: { limit, startIndex, userId } }),
+    [limit, startIndex, userId]
+  );
+
   useEffect(() => {
-    getRecipes({ params: { limit, startIndex, userId } });
+    updateRecipes();
   }, [limit, startIndex]);
 
   const list = useMemo(
@@ -111,9 +117,7 @@ const DashboardRecipes = () => {
             <IconButton aria-label="Edit recipe">
               <EditIcon />
             </IconButton>
-            <IconButton aria-label="Delete recipe">
-              <DeleteIcon />
-            </IconButton>
+            <DeletePostControl title={title} id={id} update={updateRecipes} />
           </TableCell>
         </TableRow>
       ))

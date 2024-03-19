@@ -8,8 +8,8 @@ This project is a blog MERN application that allows admin to post recipes. The p
 - **Home page**: banner and list of recent recipes
 - **New recipe page** (only for Admin user)
 - **Dashboard Section**:
--- **User profile page**: changing user data such as email, avatar and etc. 
--- **Recipe list**: list with all user's recipes with action buttons 
+  - **User profile page**: changing user data such as email, avatar and etc. 
+  - **Recipe list**: list with all user's recipes with action buttons 
 
 ### Technologies and Tools
 

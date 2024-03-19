@@ -73,8 +73,8 @@ const NewRecipe = () => {
   };
 
   return (
-    <Container maxWidth="md" sx={{ py: { xs: 4, md: 6 } }}>
-      <Paper sx={{ p: { xs: 4, sm: 6 } }}>
+    <Container maxWidth="md">
+      <Paper sx={{ p: { xs: 3, sm: 6 } }}>
         <Typography fontWeight="medium" sx={{ typography: { xs: 'h6', md: 'h4' } }} mb={2}>
           Create a new recipe
         </Typography>

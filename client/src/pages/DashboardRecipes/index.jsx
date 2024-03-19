@@ -1,5 +1,6 @@
 import { useEffect, useMemo, useState } from 'react';
 import { format } from 'date-fns';
+import { Link as RouterLink } from 'react-router-dom';
 import useAxios from 'axios-hooks';
 import Table from '@mui/material/Table';
 import TableBody from '@mui/material/TableBody';
@@ -12,18 +13,18 @@ import Paper from '@mui/material/Paper';
 import IconButton from '@mui/material/IconButton';
 import Typography from '@mui/material/Typography';
 import Container from '@mui/material/Container';
-import Chip from '@mui/material/Chip';
-import Stack from '@mui/material/Stack';
 import Box from '@mui/material/Box';
+import Link from '@mui/material/Link';
 import CircularProgress from '@mui/material/CircularProgress';
 import DeleteIcon from '@mui/icons-material/Delete';
 import EditIcon from '@mui/icons-material/Edit';
 
 import { useContextData } from '../../context';
+import CategoriesList from '../../components/CategoriesList';
 
 const DashboardRecipes = () => {
   const {
-    profile: { _id: id },
+    profile: { _id: userId },
   } = useContextData();
 
   const [startIndex, setStartIndex] = useState(0);
@@ -44,7 +45,7 @@ const DashboardRecipes = () => {
   }, []);
 
   useEffect(() => {
-    getRecipes({ params: { limit, startIndex, userId: id } });
+    getRecipes({ params: { limit, startIndex, userId } });
   }, [limit, startIndex]);
 
   const list = useMemo(
@@ -89,20 +90,20 @@ const DashboardRecipes = () => {
       );
     }
     return list.length && categories.length ? (
-      list.map(({ _id, title, updatedAt, createdAt, preview, categories }) => (
-        <TableRow key={_id}>
+      list.map(({ _id: id, title, updatedAt, createdAt, preview, categories }) => (
+        <TableRow key={id} hover>
           <TableCell>
             <Box maxWidth={100}>
               <img src={preview} alt={`Preview of ${title}`} width="100%" />
             </Box>
           </TableCell>
-          <TableCell sx={{ fontWeight: 'bold' }}>{title}</TableCell>
+          <TableCell sx={{ fontWeight: 'bold' }}>
+            <Link component={RouterLink} to={`/recipes/${id}`} target="_blank">
+              {title}
+            </Link>
+          </TableCell>
           <TableCell>
-            <Stack direction="row" gap={1} flexWrap="wrap">
-              {categories.map((category) => (
-                <Chip key={category._id} label={category.name} size="small" />
-              ))}
-            </Stack>
+            <CategoriesList categories={categories} />
           </TableCell>
           <TableCell>{format(createdAt, 'd MMM yyyy')}</TableCell>
           <TableCell>{format(updatedAt, 'd MMM yyyy')}</TableCell>

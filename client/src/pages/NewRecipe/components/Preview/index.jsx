@@ -19,7 +19,7 @@ const Preview = ({ control, name, isSubmitted, rules }) => (
           <>
             <Box
               position="relative"
-              minHeight={150}
+              height={{ xs: 100, sm: 150, md: 200 }}
               sx={{
                 borderRadius: 1,
                 border: withError ? `1px red` : '',
